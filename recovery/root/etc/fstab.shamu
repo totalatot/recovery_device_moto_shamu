@@ -2,12 +2,15 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 #
-#<src>                                                <mnt_point>  <type>  <mnt_flags and options>                     <fs_mgr_flags>
-/dev/block/platform/msm_sdcc.1/by-name/system         /system      ext4    ro,barrier=1                                wait
-/dev/block/platform/msm_sdcc.1/by-name/userdata    /data        ext4    rw,nosuid,nodev,noatime,nodiratime,noauto_da_alloc,nobarrier    wait,check,formattable,encryptable=/dev/block/platform/msm_sdcc.1/by-name/metadata
-/dev/block/platform/msm_sdcc.1/by-name/cache       /cache       ext4    rw,noatime,nosuid,nodev,barrier=1,data=ordered   wait,check,formattable
-/dev/block/platform/msm_sdcc.1/by-name/modem       /firmware    ext4    ro,barrier=1,context=u:object_r:firmware_file:s0    wait
-/dev/block/platform/msm_sdcc.1/by-name/persist     /persist     ext4    rw,nosuid,nodev,barrier=1                      wait,check,notrim
+
+# NOTE: /system partition is now early-mounted and the fstab entry is specified in device tree (duplicated below for recovery image purposes only):
+
+#<src>                                              <mnt_point>     <type>  <mnt_flags and options>                                         <fs_mgr_flags>
+/dev/block/platform/msm_sdcc.1/by-name/system       /system         ext4    ro,barrier=1                                                    wait,recoveryonly
+/dev/block/platform/msm_sdcc.1/by-name/userdata     /data           ext4    rw,nosuid,nodev,noatime,noauto_da_alloc,nobarrier               wait,check,formattable,latemount,encryptable=/dev/block/platform/msm_sdcc.1/by-name/metadata
+/dev/block/platform/msm_sdcc.1/by-name/cache        /cache          ext4    rw,noatime,nosuid,nodev,barrier=1,data=ordered                  wait,check,formattable
+/dev/block/platform/msm_sdcc.1/by-name/modem        /firmware       ext4    ro,barrier=1,context=u:object_r:firmware_file:s0                wait
+/dev/block/platform/msm_sdcc.1/by-name/persist      /persist        ext4    rw,nosuid,nodev,noatime,barrier=1                               wait,check,notrim
 /dev/block/platform/msm_sdcc.1/by-name/boot         /boot           emmc    defaults                                                        defaults
 /dev/block/platform/msm_sdcc.1/by-name/recovery     /recovery       emmc    defaults                                                        defaults
 /dev/block/platform/msm_sdcc.1/by-name/misc         /misc           emmc    defaults                                                        defaults
@@ -24,3 +27,4 @@
 /dev/block/platform/msm_sdcc.1/by-name/logo         /logo           emmc    defaults                                                        defaults
 /dev/block/platform/msm_sdcc.1/by-name/frp          /persistent     emmc    defaults                                                        defaults
 /devices/*/xhci-hcd.0.auto/usb*                     auto            auto    defaults                                                        voldmanaged=usb:auto
+/dev/block/zram0                                    none            swap    defaults                                                        zramsize=536870912,notrim,max_comp_streams=4
